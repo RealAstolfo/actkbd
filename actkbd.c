@@ -50,6 +50,7 @@ static int usage() {
 	"        -c, --config <file>     Specify the configuration file to use\n"
 	"        -D, --daemon            Launch in daemon mode\n"
 	"        -d, --device <device>   Specify the device to use\n"
+	"        -g, --grab              Grab the device by default\n"
 	"        -h, --help              Show this help text\n"
 	"        -n, --noexec            Do not execute any commands\n"
 	"        -p, --pidfile <file>    Use a file to store the PID\n"
@@ -155,12 +156,13 @@ int main(int argc, char **argv) {
     key_cmd *cmd;
 
     /* Options */
-    int help = 0, noexec = 0, version = 0, showexec = 0, showkey = 0;
+    int grab = 0, help = 0, noexec = 0, version = 0, showexec = 0, showkey = 0;
 
     struct option options[] = {
 	{ "config", required_argument, 0, 'c' },
 	{ "daemon", no_argument, 0, 'D' },
 	{ "device", required_argument, 0, 'd' },
+	{ "grab", no_argument, 0, 'g' },
 	{ "help", no_argument, 0, 'h' },
 	{ "noexec", no_argument, 0, 'n' },
 	{ "pidfile", required_argument, 0, 'p' },
@@ -176,7 +178,7 @@ int main(int argc, char **argv) {
     while (1) {
 	int c, option_index = 0;
 
-	c = getopt_long (argc, argv, "c:Dd:hp:qnv::Vxsl", options, &option_index);
+	c = getopt_long (argc, argv, "c:Dd:ghp:qnv::Vxsl", options, &option_index);
 	if (c == -1)
 	    break;
 
@@ -199,6 +201,9 @@ int main(int argc, char **argv) {
 		    usage();
 		    return USAGE;
 		}
+		break;
+	    case 'g':
+		grab = 1;
 		break;
 	    case 'h':
 		help = 1;
@@ -313,6 +318,9 @@ int main(int argc, char **argv) {
     /* Setup the signal handlers */
     signal(SIGHUP, on_hup);
     signal(SIGTERM, on_term);
+
+	if (grab)
+    grab_dev();
 
     while (get_key(&key, &type) == OK) {
 	int tmp, exec_ok = 0, norel = 0;
