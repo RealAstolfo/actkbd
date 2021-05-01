@@ -8,6 +8,9 @@
  * the Free Software Foundation.
  */
 
+#include <inttypes.h>
+#include <limits.h>
+
 #include "actkbd.h"
 
 
@@ -174,12 +177,12 @@ static int proc_config(int lineno, char *line, key_cmd **cmd) {
 
 	    errno = 0;
 	    if (strlen(num) > 0) {
-		opt = (void *)((int)strtol(num, (char **)NULL, 10));
+		opt = (void *)((intptr_t)strtol(num, (char **)NULL, 10));
 	    } else {
 		opt = (void *)((int)(-1));
 	    }
 
-	    if (((int)opt < 0) &&
+	    if (((intptr_t)opt < 0) &&
 		    ((type == ATTR_LEDON) || (type == ATTR_LEDOFF)))
 		errno = EINVAL;
 
@@ -337,25 +340,25 @@ static void print_attrs(key_cmd *cmd) {
 		str = "allrel";
 		break;
 	    case ATTR_KEY:
-		snprintf(opt, 32, "key(%i)", (int)(attr->opt));
+		snprintf(opt, sizeof(opt), "key(%"PRIxPTR")", (intptr_t)(attr->opt));
 		break;
 	    case ATTR_REL:
-		snprintf(opt, 32, "rel(%i)", (int)(attr->opt));
+		snprintf(opt, sizeof(opt), "rel(%"PRIxPTR")", (intptr_t)(attr->opt));
 		break;
 	    case ATTR_REP:
-		snprintf(opt, 32, "rep(%i)", (int)(attr->opt));
+		snprintf(opt, sizeof(opt), "rep(%"PRIxPTR")", (intptr_t)(attr->opt));
 		break;
 	    case ATTR_SET:
-		snprintf(opt, 32, "set(%i)", (int)(attr->opt));
+		snprintf(opt, sizeof(opt), "set(%"PRIxPTR")", (intptr_t)(attr->opt));
 		break;
 	    case ATTR_UNSET:
-		snprintf(opt, 32, "unset(%i)", (int)(attr->opt));
+		snprintf(opt, sizeof(opt), "unset(%"PRIxPTR")", (intptr_t)(attr->opt));
 		break;
 	    case ATTR_LEDON:
-		snprintf(opt, 32, "ledon(%i)", (int)(attr->opt));
+		snprintf(opt, sizeof(opt), "ledon(%"PRIxPTR")", (intptr_t)(attr->opt));
 		break;
 	    case ATTR_LEDOFF:
-		snprintf(opt, 32, "ledoff(%i)", (int)(attr->opt));
+		snprintf(opt, sizeof(opt), "ledoff(%"PRIxPTR")", (intptr_t)(attr->opt));
 		break;
 	    default:
 		str = "unknown";

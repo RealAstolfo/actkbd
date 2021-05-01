@@ -1,3 +1,7 @@
+0.2.9:
+	* Fixed casts of pointers to ints vice/versa
+	* Stopped config file creation from wiping existing config
+
 0.2.8:
 	* Fixed the auto-detection code so that it fails with an error when no
 	  input devices are present at all, rather than letting actkbd attempt

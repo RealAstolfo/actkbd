@@ -37,7 +37,7 @@ linux.o : actkbd.h
 install: all
 	install -D -m755 actkbd $(sbindir)/actkbd
 	install -d -m755 $(sysconfdir)
-	echo "# actkbd configuration file" > $(sysconfdir)/actkbd.conf
+	touch $(sysconfdir)/actkbd.conf
 
 clean:
 	rm -f actkbd *.o

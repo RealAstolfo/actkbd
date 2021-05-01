@@ -8,6 +8,9 @@
  * the Free Software Foundation.
  */
 
+#include <inttypes.h>
+#include <limits.h>
+
 #include "actkbd.h"
 
 
@@ -323,7 +326,8 @@ int main(int argc, char **argv) {
     grab_dev();
 
     while (get_key(&key, &type) == OK) {
-	int tmp, exec_ok = 0, norel = 0;
+	intptr_t tmp;
+	int exec_ok = 0, norel = 0;
 
 	if ((type & (KEY | REP)) != 0)
 	    set_key_bit(key, 1);
@@ -346,7 +350,7 @@ int main(int argc, char **argv) {
 	    /* Attribute implementation */
 	    attr = cmd->attrs;
 	    while (attr != NULL) {
-		char *str, opt[32] = { '\0' };
+		char *str, opt[sizeof(intptr_t) * CHAR_BIT] = { '\0' };
 		int out_type = INVALID;
 		switch (attr->type) {
 		    case ATTR_EXEC:
@@ -389,29 +393,29 @@ int main(int argc, char **argv) {
 			break;
 		    case ATTR_SET:
 			str = "set";
-			tmp = (int)(attr->opt);
+			tmp = (intptr_t)(attr->opt);
 			if (tmp < 0)
 			    tmp = key;
 			if (tmp == key)
 			    norel = 1;
-			snprintf(opt, 32, "%i", tmp);
+			snprintf(opt, sizeof(opt), "%"PRIxPTR"", tmp);
 			set_key_bit(tmp, 1);
 			break;
 		    case ATTR_UNSET:
 			str = "unset";
-			tmp = (((int)(attr->opt)) >= 0)?(int)(attr->opt):key;
-			snprintf(opt, 32, "%i", tmp);
+			tmp = (((intptr_t)(attr->opt)) >= 0)?(intptr_t)(attr->opt):key;
+			snprintf(opt, sizeof(opt), "%"PRIxPTR"", tmp);
 			set_key_bit(tmp, 0);
 			break;
 		    case ATTR_LEDON:
 			str = "ledon";
-			snprintf(opt, 32, "%i", (int)(attr->opt));
-			set_led((int)(attr->opt), 1);
+			snprintf(opt, sizeof(opt), "%"PRIxPTR"", (intptr_t)(attr->opt));
+			set_led((intptr_t)(attr->opt), 1);
 			break;
 		    case ATTR_LEDOFF:
 			str = "ledoff";
-			snprintf(opt, 32, "%i", (int)(attr->opt));
-			set_led((int)(attr->opt), 0);
+			snprintf(opt, sizeof(opt), "%"PRIxPTR"", (intptr_t)(attr->opt));
+			set_led((intptr_t)(attr->opt), 0);
 			break;
 		    default:
 			str = "unknown";
@@ -419,8 +423,8 @@ int main(int argc, char **argv) {
 		}
 
 		if (out_type != INVALID) {
-		    tmp = (((int)(attr->opt)) >= 0)?(int)(attr->opt):key;
-		    snprintf(opt, 32, "%i", tmp);
+		    tmp = (((intptr_t)(attr->opt)) >= 0)?(intptr_t)(attr->opt):key;
+		    snprintf(opt, sizeof(opt), "%"PRIxPTR"", tmp);
 		    snd_key(tmp, out_type);
 		}
 
